@@ -1,0 +1,17 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    pre-build:
+      - echo "Building OpenEmployee Core smoke image"
+run:
+  runtime-version: latest
+  command: uvicorn openemployee_core.smoke.app:app --host 0.0.0.0 --port 8080
+  network:
+    port: 8080
+    env: PORT
+  env:
+    - name: PORT
+      value: "8080"
+    - name: GIT_COMMIT
+      value: "phase-1"
