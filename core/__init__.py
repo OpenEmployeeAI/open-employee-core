@@ -1,0 +1,1 @@
+"""OpenEmployee core package."""
