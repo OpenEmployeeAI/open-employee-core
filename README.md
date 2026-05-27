@@ -17,8 +17,34 @@ This follows the upstream `temporal-community/temporal-ai-agent` PR #61 pattern:
 ## Scope for this repo
 
 - Role: core
-- Current phase: scaffold and coordination only.
-- Production implementation is intentionally out of scope until issues are claimed.
+- Current phase (Phase 1): canonical contracts, naming, workflow skeleton, mock activities, safety guards, and a synchronous smoke API.
+- Production connectors and real LLM providers come in later phases.
+
+## Quickstart
+
+```bash
+pip install -e '.[dev]'
+pytest -q
+
+# Smoke API (synchronous simulator; not a substitute for the Temporal worker):
+uvicorn openemployee_core.smoke.app:app --port 8080
+curl -s localhost:8080/health | jq
+```
+
+## Layout
+
+```
+src/openemployee_core/
+  contracts/   # Pydantic v2 models (MCPToolInvocation, ToolSelection*, PolicyDecision, ...)
+  naming/      # build/parse mcp__<server>__<tool>, llm__<provider>__select_tool
+  activities/  # Temporal Activity defns (mock LLM selector, mock MCP tools, policy)
+  workflows/   # EmployeeWorkflow — only execute_activity boundaries, no LLM/MCP SDK imports
+  policy/      # Pluggable policy evaluator
+  safety/      # Identity / secret / claim-check guards
+  smoke/       # FastAPI app for hosted smoke verification
+```
+
+See `docs/` for the full contract source map, PR #61 mapping, and AWS smoke instructions.
 
 ## Architecture anchors
 
